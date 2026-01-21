@@ -24,12 +24,10 @@ def_EHelper(vadd) {
 }
 
 def_EHelper(vsub) {
-  Assert(s->src_vmode != SRC_VI, "vsub.vi not supported\n");
   ARITH(SUB, SIGNED)
 }
 
 def_EHelper(vrsub) {
-  Assert(s->src_vmode != SRC_VV, "vrsub.vv not supported\n");
   ARITH(RSUB, SIGNED)
 }
 
@@ -154,12 +152,10 @@ def_EHelper(vmsne) {
 }
 
 def_EHelper(vmsltu) {
-  Assert(s->src_vmode != SRC_VI, "vmsltu not supprt SRC_VI\n");
   ARITH_MASK(MSLTU, UNSIGNED)
 }
 
 def_EHelper(vmslt) {
-  Assert(s->src_vmode != SRC_VI, "vmslt not supprt SRC_VI\n");
   ARITH_MASK(MSLT, SIGNED)
 }
 
@@ -172,12 +168,10 @@ def_EHelper(vmsle) {
 }
 
 def_EHelper(vmsgtu) {
-  Assert(s->src_vmode != SRC_VV, "vmsgtu not support SRC_VV\n");
   ARITH_MASK(MSGTU, UNSIGNED)
 }
 
 def_EHelper(vmsgt) {
-  Assert(s->src_vmode != SRC_VV, "vmsgt not support SRC_VV\n");
   ARITH_MASK(MSGT, SIGNED)
 }
 
@@ -259,30 +253,6 @@ def_EHelper(vwredsumu) {
 
 def_EHelper(vwredsum) {
   WREDUCTION(REDSUM, SIGNED);
-}
-
-def_EHelper(vdotu) {
-  longjmp_exception(EX_II);
-}
-
-def_EHelper(vdot) {
-  longjmp_exception(EX_II);
-}
-
-def_EHelper(vwsmaccu) {
-  longjmp_exception(EX_II);
-}
-
-def_EHelper(vwsmacc) {
-  longjmp_exception(EX_II);
-}
-
-def_EHelper(vwsmaccsu) {
-  longjmp_exception(EX_II);
-}
-
-def_EHelper(vwsmaccus) {
-  longjmp_exception(EX_II);
 }
 
 
@@ -851,42 +821,34 @@ def_EHelper(vmxnor) {
 }
 
 def_EHelper(vdivu) {
-  Assert(s->src_vmode != SRC_VI, "vdivu does not support SRC_VI\n");
   ARITH(DIVU, UNSIGNED)
 }
 
 def_EHelper(vdiv) {
-  Assert(s->src_vmode != SRC_VI, "vdiv does not support SRC_VI\n");
   ARITH(DIV, SIGNED)
 }
 
 def_EHelper(vremu) {
-  Assert(s->src_vmode != SRC_VI, "vremu does not support SRC_VI\n");
   ARITH(REMU, UNSIGNED)
 }
 
 def_EHelper(vrem) {
-  Assert(s->src_vmode != SRC_VI, "vrem does not support SRC_VI\n");
   ARITH(REM, SIGNED)
 }
 
 def_EHelper(vmulhu) {
-  Assert(s->src_vmode != SRC_VI, "vmulhu does not support SRC_VI\n");
   ARITH(MULHU, UNSIGNED)
 }
 
 def_EHelper(vmul) {
-  Assert(s->src_vmode != SRC_VI, "vmul does not support SRC_VI\n");
   ARITH(MUL, SIGNED)
 }
 
 def_EHelper(vmulhsu) {
-  Assert(s->src_vmode != SRC_VI, "vmulhsu does not support SRC_VI\n");
   ARITH(MULHSU, UNSIGNED)
 }
 
 def_EHelper(vmulh) {
-  Assert(s->src_vmode != SRC_VI, "vmulh does not support SRC_VI\n");
   ARITH(MULH, SIGNED)
 }
 

@@ -91,7 +91,7 @@ typedef struct IpriosModule IpriosModule;
 typedef struct IpriosSort IpriosSort;
 
 typedef struct {
-  // Below will be synced by regcpy when run difftest, DO NOT TOUCH
+  /*** Below will be synced by regcpy when run difftest, DO NOT TOUCH ***/
   union {
     uint64_t _64;
   } gpr[32];
@@ -114,14 +114,13 @@ typedef struct {
   uint64_t mscratch, sscratch;
   uint64_t mideleg, medeleg;
   uint64_t pc;
-  // Above will be synced by regcpy when run difftest, DO NOT TOUCH
 
 #ifdef CONFIG_RVH
   uint64_t v; // virtualization mode
   uint64_t mtval2, mtinst, hstatus, hideleg, hedeleg;
   uint64_t hcounteren, htval, htinst, hgatp, vsstatus;
   uint64_t vstvec, vsepc, vscause, vstval, vsatp, vsscratch;
-#endif
+#endif // CONFIG_RVH
 
 #ifdef CONFIG_RVV
   //vector
@@ -131,20 +130,26 @@ typedef struct {
     uint16_t _16[VENUM16];
     uint8_t  _8[VENUM8];
   } vr[32];
+#endif // CONFIG_RVV
 
+#ifdef CONFIG_DIFFTEST_CHECK_VCSR
   uint64_t vstart;
   uint64_t vxsat, vxrm, vcsr;
   uint64_t vl, vtype, vlenb;
-#endif // CONFIG_RVV
-#ifndef CONFIG_FPU_NONE
-  uint64_t fcsr;
-#endif // CONFIG_FPU_NONE
+#endif // CONFIG_DIFFTEST_CHECK_VCSR
 
-#ifdef CONFIG_RV_SDTRIG
+#ifdef CONFIG_DIFFTEST_CHECK_FCSR
+  uint64_t fcsr;
+#endif // CONFIG_DIFFTEST_CHECK_FCSR
+
+#ifdef CONFIG_DIFFTEST_CHECK_SDTRIG
   uint64_t tselect;
   uint64_t tdata1;
   uint64_t tinfo;
-#endif // CONFIG_RV_SDTRIG
+#endif // CONFIG_DIFFTEST_CHECK_SDTRIG
+
+  uint64_t difftest_state_end;
+  /** Above will be used and synced by regcpy when run difftest, DO NOT TOUCH ***/
 
 
   // exec state
@@ -210,6 +215,10 @@ typedef struct {
   uint64_t old_mtopi;
   uint64_t old_stopi;
   uint64_t old_vstopi;
+#endif
+
+#ifdef CONFIG_RVH
+  uint64_t hideleg_reg;
 #endif
 
 } riscv64_CPU_state;
@@ -340,7 +349,110 @@ typedef struct {
     } vamo;
     #endif // CONFIG_RVV
 
+    #ifdef CONFIG_CUSTOM_TENSOR
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t reserved_0 : 5;
+      uint32_t reserved_1 : 3;
+      uint32_t rs1        : 5;
+      uint32_t rs2        : 5;
+      uint32_t reserved_2 : 2;
+      uint32_t rs3        : 5;
+      uint32_t tcfgrs1    : 3;
+      uint32_t tcfgrs2    : 3;
+      uint32_t tcfgrs3    : 3;
+      uint32_t reserved_3 : 2;
+      uint32_t rs3type    : 1;
+      uint32_t rs2type    : 6;
+      uint32_t rs1type    : 6;
+      uint32_t funct8     : 8;
+    } tensor_compute_64;
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t rd         : 5;
+      uint32_t reserved0  : 3;
+      uint32_t rs1        : 5;
+      uint32_t reserved1  : 7;
+      uint32_t rs3        : 5;
+      uint32_t tcsr_id    : 10;
+      uint32_t reserved2  : 14;
+      uint32_t funct8     : 8;
+    } tensor_cfg_xchg_64;
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t rd         : 5;
+      uint32_t imm_lo     : 15;
+      uint32_t rs3        : 5;
+      uint32_t tcsr_id    : 10;
+      uint32_t imm_hi     : 14;
+      uint32_t funct8     : 8;
+    } tensor_cfg_imm_64;
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t reserved_0 : 5;
+      uint32_t log2w     : 3;
+      uint32_t rs1        : 5;
+      uint32_t reserved_1 : 5;
+      uint32_t mode       : 2;
+      uint32_t rs3        : 5;
+      uint32_t tcfgrs1    : 3;
+      uint32_t reserved_2 : 3;
+      uint32_t tcfgrs3    : 3;
+      uint32_t reserved_3 : 15;
+    } tensor_load_store_64;
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t reserved_0 : 5;
+      uint32_t type_lo    : 3;
+      uint32_t rs1        : 5;
+      uint32_t rs2        : 5;
+      uint32_t dim : 2;
+      uint32_t rs3        : 5;
+      uint32_t tcfgrs1    : 3;
+      uint32_t tcfgrs2    : 3;
+      uint32_t tcfgrs3    : 3;
+      uint32_t type_hi    : 4;
+      uint32_t broadcast  : 4;
+      uint32_t reserved_2 : 1;
+      uint32_t op         : 6;
+      uint32_t funct8     : 8;
+    } tensor_element_wise_compute_64;
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t reserved0  : 5;
+      uint32_t rs1type_lo : 3;
+      uint32_t rs1        : 5;
+      uint32_t reserved1  : 5;
+      uint32_t mode       : 2;
+      uint32_t rs3        : 5;
+      uint32_t tcfgrs1    : 3;
+      uint32_t reserved2  : 3;
+      uint32_t tcfgrs3    : 3;
+      uint32_t rs1type_hi : 4;
+      uint32_t rs3type    : 7;
+      uint32_t reserve3   : 4;
+      uint32_t funct8     : 8;
+    } tensor_convert_64;
+    struct {
+      uint32_t opcode     : 7;
+      uint32_t reserved0  : 5;
+      uint32_t type_lo    : 3;
+      uint32_t rs1        : 5;
+      uint32_t reserved1  : 5;
+      uint32_t mode       : 2;
+      uint32_t rs3        : 5;
+      uint32_t tcfgrs1    : 3;
+      uint32_t reserved2  : 3;
+      uint32_t tcfgrs3    : 3;
+      uint32_t type_hi    : 4;
+      uint32_t reserved3  : 5;
+      uint32_t op         : 6;
+      uint32_t funct8     : 8;
+    } tensor_sfu_64;
+    uint64_t val;
+    #else
     uint32_t val;
+    #endif
   } instr;
 } riscv64_ISADecodeInfo;
 
@@ -354,5 +466,5 @@ int get_data_mmu_state();
 int get_hyperinst_mmu_state();
 #endif //CONFIG_RVH
 
-#define isa_mmu_state() get_data_mmu_state() 
+#define isa_mmu_state() get_data_mmu_state()
 #endif

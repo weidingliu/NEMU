@@ -96,6 +96,7 @@ CFLAGS_BUILD += $(call remove_quote,$(CONFIG_CC_OPT))
 CFLAGS_BUILD += $(if $(CONFIG_CC_LTO),-flto=auto,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_DEBUG),-ggdb3,)
 CFLAGS_BUILD += $(if $(CONFIG_CC_ASAN),-fsanitize=address,)
+CFLAGS_BUILD += $(call remove_quote,$(CONFIG_CC_OPT_FLAGS))
 CFLAGS  += $(CFLAGS_BUILD)
 LDFLAGS += $(CFLAGS_BUILD)
 
@@ -126,6 +127,7 @@ LDFLAGS += -lm
 endif
 
 include $(NEMU_HOME)/scripts/repos.mk
+include $(NEMU_HOME)/scripts/ready-to-run.mk
 include $(NEMU_HOME)/scripts/git.mk
 include $(NEMU_HOME)/scripts/config.mk
 include $(NEMU_HOME)/scripts/isa.mk

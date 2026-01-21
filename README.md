@@ -1,6 +1,6 @@
 # NEMU
 
-## Abort NEMU
+## About NEMU
 
 NEMU(NJU Emulator) is a simple but complete full-system emulator designed for teaching purpose.
 Originally it supports x86, mips32, riscv64, and riscv32.
@@ -159,12 +159,7 @@ make -j
 ```
 `./build/riscv64-nemu-interpreter-so` is the reference design.
 
-Specifically, xxx-ref_defconfig varies for different ISA extensions.
-
-| rv64gcb | rv64gcbh | rv64gcbv |
-| :-----: | :------: | :-------: |
-|  riscv64-xs-ref_defconfig | riscv64-rvh-ref_defconfig | riscv64-rvv-ref_defconfig |
-
+riscv64-xs_defconfig is the base configuration targeting XiangShan processor, which has already enabled RVH and RVV. There are also a series of other configurations based on this base configuration.
 
 #### Cosimulation
 
